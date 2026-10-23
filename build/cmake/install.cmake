@@ -21,6 +21,20 @@ foreach(header ${wxINSTALL_HEADERS})
     )
 endforeach()
 
+# OrcaSlicer uses the private headers (accessibility support), which the install above skips
+install(
+    DIRECTORY "${wxSOURCE_DIR}/include/wx/private"
+    DESTINATION "${wxINSTALL_INCLUDE_DIR}/wx"
+)
+install(
+    DIRECTORY "${wxSOURCE_DIR}/include/wx/generic/private"
+    DESTINATION "${wxINSTALL_INCLUDE_DIR}/wx/generic"
+)
+install(
+    DIRECTORY "${wxSOURCE_DIR}/include/wx/gtk/private"
+    DESTINATION "${wxINSTALL_INCLUDE_DIR}/wx/gtk"
+)
+
 if(MSVC)
     install(
         DIRECTORY "${wxSOURCE_DIR}/include/msvc"
