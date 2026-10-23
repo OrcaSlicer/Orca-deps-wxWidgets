@@ -123,7 +123,7 @@ CGFloat wxNSColorRefData::GetCGColorComponent(CGColorRef col, int rgbaIndex)
 CGFloat wxNSColorRefData::Red() const
 {
     wxOSXEffectiveAppearanceSetter helper;
-    if ( NSColor* colRGBA = [m_nsColour colorUsingColorSpaceName:NSCalibratedRGBColorSpace] )
+    if ( NSColor* colRGBA = [m_nsColour colorUsingColorSpace:[NSColorSpace sRGBColorSpace]] )
         return [colRGBA redComponent];
 
     return GetCGColorComponent([m_nsColour CGColor], 0);
@@ -132,7 +132,7 @@ CGFloat wxNSColorRefData::Red() const
 CGFloat wxNSColorRefData::Green() const
 {
     wxOSXEffectiveAppearanceSetter helper;
-    if ( NSColor* colRGBA = [m_nsColour colorUsingColorSpaceName:NSCalibratedRGBColorSpace] )
+    if ( NSColor* colRGBA = [m_nsColour colorUsingColorSpace:[NSColorSpace sRGBColorSpace]] )
         return [colRGBA greenComponent];
 
     return GetCGColorComponent([m_nsColour CGColor], 1);
@@ -141,7 +141,7 @@ CGFloat wxNSColorRefData::Green() const
 CGFloat wxNSColorRefData::Blue() const
 {
     wxOSXEffectiveAppearanceSetter helper;
-    if ( NSColor* colRGBA = [m_nsColour colorUsingColorSpaceName:NSCalibratedRGBColorSpace] )
+    if ( NSColor* colRGBA = [m_nsColour colorUsingColorSpace:[NSColorSpace sRGBColorSpace]] )
         return [colRGBA blueComponent];
 
     return GetCGColorComponent([m_nsColour CGColor], 2);
@@ -150,7 +150,7 @@ CGFloat wxNSColorRefData::Blue() const
 CGFloat wxNSColorRefData::Alpha() const
 {
     wxOSXEffectiveAppearanceSetter helper;
-    if ( NSColor* colRGBA = [m_nsColour colorUsingColorSpaceName:NSCalibratedRGBColorSpace] )
+    if ( NSColor* colRGBA = [m_nsColour colorUsingColorSpace:[NSColorSpace sRGBColorSpace]] )
         return [colRGBA alphaComponent];
 
     return GetCGColorComponent([m_nsColour CGColor], 3);
@@ -158,7 +158,7 @@ CGFloat wxNSColorRefData::Alpha() const
 
 bool wxNSColorRefData::IsSolid() const
 {
-    return [m_nsColour colorUsingColorSpaceName:NSCalibratedRGBColorSpace] != nil;
+    return [m_nsColour colorUsingColorSpace:[NSColorSpace sRGBColorSpace]] != nil;
 }
 
 CGColorRef wxNSColorRefData::GetCGColor() const
