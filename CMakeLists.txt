@@ -100,7 +100,6 @@ endif()
 
 project(wxWidgets VERSION ${wxVERSION} LANGUAGES ${wxLANGUAGES})
 
-include(build/cmake/orca_defaults.cmake)
 include(build/cmake/main.cmake)
 
 # Set the default startup project for Visual Studio
