@@ -11,6 +11,12 @@
 
 #include "wx/gtk/filectrl.h"    // for wxGtkFileChooser
 
+// wxFileDialog records whether a wxModalDialogHook answered its last ShowModal() call, and while one did its path
+// getters return what wxFileDialogBase::SetPath() stored, and its list getters nothing, instead of asking the GTK
+// chooser, which holds no answer for a dialog that never showed. Defined so that code answering file dialogs from a
+// hook can tell this wxGTK does so.
+#define wxHAS_GTK_FILEDLG_HOOK_ANSWER
+
 typedef struct _GtkFileChooser GtkFileChooser;
 
 //-------------------------------------------------------------------------
@@ -89,6 +95,9 @@ private:
     wxGtkFileChooser    m_fc;
     wxGtkFileChooser* m_fcNative = nullptr;
     GtkFileChooser* m_fileChooserNative = nullptr;
+
+    // Whether a wxModalDialogHook answered the last ShowModal() call, with or without a path.
+    bool m_answeredByHook = false;
 
     wxDECLARE_DYNAMIC_CLASS(wxFileDialog);
     wxDECLARE_EVENT_TABLE();
