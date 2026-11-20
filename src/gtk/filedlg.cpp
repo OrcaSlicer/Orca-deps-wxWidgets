@@ -431,7 +431,16 @@ void wxFileDialog::GTKDropNative()
 
 int wxFileDialog::ShowModal()
 {
-    WX_HOOK_MODAL_DIALOG();
+    // WX_HOOK_MODAL_DIALOG(), recording whether the hook answered: its answer ends the call before the dialog
+    // shows, so the GTK chooser holds none, and the path getters return what SetPath() stored instead.
+    m_answeredByHook = false;
+    const int modalDialogHookRC = wxModalDialogHook::CallEnter(this);
+    if ( modalDialogHookRC != wxID_NONE )
+    {
+        m_answeredByHook = true;
+        return modalDialogHookRC;
+    }
+    wxModalDialogHookExitGuard modalDialogHookExit(this);
 
     CreateExtraControl();
 
@@ -499,21 +508,36 @@ void wxFileDialog::OnSize(wxSizeEvent&)
 wxString wxFileDialog::GetPath() const
 {
     wxCHECK_MSG( !HasFlag(wxFD_MULTIPLE), wxString(), "When using wxFD_MULTIPLE, must call GetPaths() instead" );
+    if ( m_answeredByHook )
+        return m_path;
     return GetFileChooser().GetPath();
 }
 
+// A hook's answer gives no list, as on the other ports, where only an accept in the dialog fills it.
 void wxFileDialog::GetFilenames(wxArrayString& files) const
 {
+    if ( m_answeredByHook )
+    {
+        files.Empty();
+        return;
+    }
     GetFileChooser().GetFilenames(files);
 }
 
 void wxFileDialog::GetPaths(wxArrayString& paths) const
 {
+    if ( m_answeredByHook )
+    {
+        paths.Empty();
+        return;
+    }
     GetFileChooser().GetPaths(paths);
 }
 
 wxString wxFileDialog::GetDirectory() const
 {
+    if ( m_answeredByHook )
+        return m_dir;
     return GetFileChooser().GetDirectory();
 }
 
@@ -578,6 +602,9 @@ void wxFileDialog::SetFilename(const wxString& name)
 wxString wxFileDialog::GetFilename() const
 {
     wxCHECK_MSG( !HasFlag(wxFD_MULTIPLE), wxString(), "When using wxFD_MULTIPLE, must call GetFilenames() instead" );
+
+    if ( m_answeredByHook )
+        return m_fileName;
 
     wxString currentFilename(GetFileChooser().GetFilename());
     if (currentFilename.empty())
